@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: const Text('Firebase Jorndal'),
+        title: const Text('Firebase Jornadal'),
         centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
