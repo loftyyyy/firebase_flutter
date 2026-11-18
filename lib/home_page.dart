@@ -62,10 +62,33 @@ class _HomePageState extends State<HomePage> {
             ? service.getFavoriteItems()
             : service.getItems(),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Unable to load items: ${snapshot.error}',
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final docs = snapshot.data!.docs;
+          final docs = [...snapshot.data!.docs];
+          if (showFavoritesOnly) {
+            docs.sort((a, b) {
+              final aData = a.data() as Map<String, dynamic>;
+              final bData = b.data() as Map<String, dynamic>;
+              final aCreatedAt = aData['createdAt'];
+              final bCreatedAt = bData['createdAt'];
+              final aMillis = aCreatedAt is Timestamp
+                  ? aCreatedAt.millisecondsSinceEpoch
+                  : 0;
+              final bMillis = bCreatedAt is Timestamp
+                  ? bCreatedAt.millisecondsSinceEpoch
+                  : 0;
+              return bMillis.compareTo(aMillis);
+            });
+          }
           if (docs.isEmpty) {
             return Center(
                 child: Text(
