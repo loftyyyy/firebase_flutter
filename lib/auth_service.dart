@@ -10,8 +10,9 @@ class AuthService {
   Future<User?> signInWithGoogle() async {
     if (kIsWeb) {
       GoogleAuthProvider googleProvider = GoogleAuthProvider();
-      UserCredential userCredential =
-          await _auth.signInWithPopup(googleProvider);
+      UserCredential userCredential = await _auth.signInWithPopup(
+        googleProvider,
+      );
       return userCredential.user;
     } else {
       final googleUser = await _googleSignIn!.signIn();
@@ -51,6 +52,20 @@ class AuthService {
     } catch (e) {
       debugPrint("Login error: $e");
       return null;
+    }
+  }
+
+  // PASSWORD RESET
+  Future<bool> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email.trim());
+      return true;
+    } on FirebaseAuthException catch (e) {
+      debugPrint("Password reset error: ${e.code}");
+      return false;
+    } catch (e) {
+      debugPrint("Password reset error: $e");
+      return false;
     }
   }
 
